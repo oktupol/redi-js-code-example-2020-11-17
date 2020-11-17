@@ -1,0 +1,144 @@
+html {
+    font-size: 16px;
+    /*
+     * Variables can be defined with two dashes (--) before a custom name. They can then be used inside the element and all children
+     * Since everything is a child of the html-element, this variable is practically global.
+     */
+    --footnote-color: rgb(0, 0, 196);
+}
+#main {
+    /* 1ch is the width of the 0 (zero) character in the current font */
+    max-width: 80ch;
+    margin: 0 auto;
+}
+
+/*
+ * This is a showcase of some advanced css features. It is by no means comprehensive, but might serve as an overview for you
+ * for future ideas what to look into next.
+ */
+
+/*
+ * Pseudo-Selectors
+ *
+ * There are two types: Pseudo-Classes and Pseudo-Elements
+ * Pseudo-Classes have one colon (:) before their name, Pseudo-Elements have two (::)
+ * 
+ * Pseudo-Classes can be seen as a precondition for an element to be selected.
+ * Example: a:hover - Selects the a-element only when hovered above with the mouse
+ *
+ * Pseudo-Elements select parts of an element instead of the whole
+ * Example a::first-leter - Selects only the first letter inside the a, as opposed to the entire a
+ */
+
+/* Decorating the heading using the ::before and ::after Pseudo-Elements */
+h1 {
+    font-size: 3em;
+    /*
+     * The h1 is now a flex container, with ::before, the text, and ::after as its three items.
+     * Even though we cannot select only the text with a css selector, it is still a fully-fledged html element and now behaves like a flex-item.
+     */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+h1::before, h1::after {
+    /* Without a content, the ::before and ::after pseudo-elements don't exist. But we can set it to an empty string if we don't need anything displayed */
+    content: '';
+    height: 0.16em;
+    border-top: 2px solid black;
+    border-bottom: 2px solid black;
+    flex-grow: 1;
+    /* Variables can be defined with two dashes (--) before a custom name. They can then be used inside the element and all children */
+    --decoration-margin: 0.8em;
+}
+h1::before {
+    margin-right: var(--decoration-margin);
+}
+h1::after {
+    margin-left: var(--decoration-margin);
+} 
+
+blockquote .cite {
+    margin-left: 2.5em;
+    font-style: italic;
+}
+
+p, #footnotes {
+    text-align: justify;
+    /* Automatic hyphenation requires the 'lang' attribute inside the page's html-tag */
+    hyphens: auto;
+}
+
+/*
+ * Drop caps using css. You can chain multiple pseudo-selectors
+ * :first-of-type selects the first of the type within the parent element
+ */
+p:first-of-type::first-letter {
+    float: left;
+    font-size: 4.5em;
+    margin-right: .1em;
+    line-height: 0;
+}
+
+/*
+ * selecting every paragraph except for the first
+ * as long as they don't have the class noindent
+
+ * p:not(:first-of-type):not(.noindent) {
+ *   background: red;
+ * }
+ */
+    
+/* Since the first paragraph got its individual style, we need to select all others with the :not(...) selector */
+p:not(:first-of-type) {
+    text-indent: 1em;
+}
+    
+/*
+ * The sibling selectors (+, ~) allows to select siblings of certain elements.
+ * This example means 'P elements that are not the first of type inside their parent, which are immediate siblings to a blockquote element'
+ */
+blockquote + p:not(:first-of-type) {
+    text-indent: initial;
+}
+
+/*
+ * Attribute selectors allow you to select elements by all attributes, not just by their class and id
+ */
+a[href^='#footnote'] {
+    vertical-align: super;
+    font-size: .75em;
+    text-decoration: none;
+    color: var(--footnote-color);
+}
+
+/*
+ * Counters can be used anywhere, not just in lists. There are three steps to using counters:
+ * Initializing them with e.g. counter-reset
+ * Incrementing them with counter-increment
+ * Displaying them with counter()
+ *
+ * This can be used to create custom list styles in ordered lists.
+ *
+ * In the future, there will be the ::marker pseudo-element, however, browser support for that is still very low.
+ */
+#footnotes {
+    list-style: none;
+    counter-reset: footnotes;
+    padding-left: 0;
+    border-top: 1px solid black;
+    font-size: .8em;
+}
+#footnotes li {
+    counter-increment: footnotes;
+    display: flex;
+    margin: .4em 0;
+}
+#footnotes li:first-of-type {
+    margin-top: .8em;
+}
+#footnotes li::before {
+    content: "[" counter(footnotes) "]";
+    margin-right: .25em;
+    color: var(--footnote-color);
+}
